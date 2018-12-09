@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ursula Alwang -- The Fate of the Jews in Europe, Visualized </title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="functions.js" ></script>
+    <script src="graph-scroll.js"></script>
+
+
+    <style>
+
+    body {
+        max-width: 900px;
+        margin: 0px auto;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    h1{
+        margin: 50px;
+    }
+
+    h1{
+        text-align: center;
+    }
+
+
+    #container{
+        position: relative;
+    }
+
+    #sections{
+        width: 300px;
+        padding-bottom:300px;
+    }
+
+    #sections > section{
+        opacity: .2;
+        margin-bottom: 200px;
+    }
+
+    #sections > section.graph-scroll-active{
+        opacity: 1;
+    }
+
+    #graph{
+        margin-left: 20px;
+        width: 500px;
+        position: sticky;
+        top: 20px;
+        float: right;
+    }
+
+    #footer{
+        height:1000px;
+    }
+
+   #tooltip{
+        position:absolute;
+        width:150px;
+        height:auto;
+        padding:10px;
+        background-color: white;
+        border-radius:10px;
+        box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+        pointer-events: none;
+    }
+
+    #tooltip.hidden{
+        display:none;
+    }
+
+    #tooltip p{
+        margin:0;
+        font-family: sans-serif;
+        font-size:12px;
+    }
+
+    #graph svg{
+        border:solid 1px lightgrey;
+    }
+
+  </style>
+
+</head>
+<body>
+    <h1>The Fate of European Jews</h1>
+    <div id="container">
+            <div id="graph"></div>
+    <div id="sections">
+
+        <section>
+            <h3>Introduction: Pre-war Jewish Population by Country</h3>
+            In 1933, approximately 9.5 million Jews lived in Europe, comprising 1.7% of the total European population. This number represented more than 60 percent of the world's Jewish population at that time, estimated at 15.3 million.
+        </section>
+
+        <section>
+            <h3>9.5 Million Jews Revisualized</h3>
+            It's difficult to get a sense of scale for 9.6 million people. It is also difficult to comprehend the path of Jews through the holocaust in relation to the total number of fatalities. This is a graph of the pre-war population of Jews in europe with every ten thousand people represented by a circle. Scholars estimate that around 3 millions Jews survived the Holocaust.
+
+            that 6 Million Jews died in the Holocaust.
+            <br><br>
+            Let's begin with the demographics of those who died.
+              </section>
+        <section>
+            <h3>Deaths by Demographic</h3>
+            It's difficult to get a sense of scale for 9.6 million people. It is also difficult to comprehend the path of Jews through the holocaust in relation to the total number of fatalities. This is a graph of the pre-war population of Jews in europe with every ten thousand people represented by a circle. Scholars estimate that 6 Million Jews died in the Holocaust. Let's begin with the demographics of those who died. That leaves about 3 million Jews who surived.
+            <br>
+            <br>
+            Use the menu below to select a demographic to view.
+            <br><br>
+            <select id="color_option">
+                <option value="children">Children</option>
+                <option value="women">Women</option>
+                <option value="elderly">Elderly</option>
+            </select>
+            <br><br>
+            All combined, women, children, and the elderly make up just more than half of the victems.
+
+        </section>
+        <section>
+          <h3>Deaths by Location -- Extermination Camps and Ghettos</h3>
+          However demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
+          <br><br>
+          <form id="camp_option">
+            <input type="checkbox" name="camps" value="auschwitz"> Auschwitz complex (including Birkenau, Monowitz, and subcamps)
+            <input type="checkbox" name="camps" value="treblinka"> Trebkinka 2
+            <input type="checkbox" name="camps" value="belzec"> Belzec
+            <input type="checkbox" name="camps" value="sobibor"> Sobibor
+            <input type="checkbox" name="camps" value="chelmno"> Chelmno
+            <input type="checkbox" name="camps" value="ghettos"> Ghettos
+          </form>
+
+
+        </section>
+        <section>
+
+        </section>
+        <section>
+          <h3>Deaths by Location -- Concentration Camps, Shooting, and Others</h3>
+          However demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
+          <br><br>
+          <form id="other_option">
+            <input type="checkbox" name="camps" value="western"> Shot in Western Poland
+            <br><br>
+            <input type="checkbox" name="camps" value="central"> Shot in Central Poland
+            <br><br>
+            <input type="checkbox" name="camps" value="concentration"> Concentration Camps
+            <br><br>
+            <input type="checkbox" name="camps" value="russian"> Russian Jews Shot in the Soviet Union
+            <br><br>
+            <input type="checkbox" name="camps" value="german"> German, Austrian, and Czech     Jews shot in the Soviet Union
+            <br><br>
+            <input type="checkbox" name="camps" value="serbia"> Shooting in Serbia
+            <br><br>
+            <input type="checkbox" name="camps" value="other"> Other
+          </form>
+
+
+        </section>
+
+    </div>
+
+</div>
+
+<div id="footer"></div>
+<div id="tooltip" class="hidden">
+        <p>Class: <span id="class"></span></p>
+        <p>
+        Petal length: <span id="petal_length"></span><br />
+        Petal width: <span id="petal_width"></span><br />
+        Sepal length: <span id="sepal_length"></span><br />
+        Sepal width: <span id="sepal_width"></span><br />
+        </p>
+   </div>
+<script>
+
+d3.csv("overview_data.csv").then(function(data){
+    const color_scale = d3.scaleOrdinal(d3.schemeCategory10);
+    const svg = d3.select("#graph").append("svg")
+        .attr("width", 600)
+        .attr("height", 400);
+
+        //create the data that represents all the 9.6 million jews in Europe before the holocaust. 1 circle will represent 20,000 people. The  dots are objects with indexes that we will then use to assign them a class. The classes correspond to the place of death, type, or demographic characteristic
+        var dots = [];
+
+        for (let i = 0; i < 960; i++) {
+          dots.push(i)
+        }
+
+        console.log(dots);
+
+    const bar_charts = create_first_barchart(svg, 550, 330, "prewar", data);
+    const dot_plot = create_iris_plot(svg, 550, 330, dots);
+
+    const vis_steps = [section_1, section_2, section_3, section_4, section_5]
+    const gs = d3.graphScroll()
+      .container(d3.select("#container"))
+      .graph(d3.select("#graph"))
+      .eventId('sec1_id')
+      .sections(d3.selectAll("#container #sections > section"))
+      .on("active", function(i){
+          console.log(i);
+          vis_steps[i]();
+      });
+
+      function section_1(){
+
+        dot_plot.opacity(0);
+        dot_plot();
+
+        svg.transition()
+          .attr("height", 400);
+
+        bar_charts.opacity(1)
+        bar_charts();
+      }
+
+      function section_2(){
+
+        dot_plot.opacity(1);
+        dot_plot();
+        dot_plot.color("survived");
+
+        bar_charts.opacity(0);
+        bar_charts();
+    }
+
+      function section_3(){
+
+        document.getElementById('color_option').addEventListener('change', function(event){
+
+          let color = document.getElementById("color_option").value;
+          console.log(color);
+          dot_plot.color(color)
+        })
+
+        svg.transition()
+          .attr("height", 400);
+
+        bar_charts.opacity(0)
+        bar_charts()
+
+      }
+
+      function section_4(){
+        //reset the colors of the dot_plot
+        color = "lightgrey";
+        dot_plot.color(color)
+        let count = 0;
+          //get all selected elements from the form
+          let selected = [];
+          var form = document.getElementById('camp_option');
+          for(var i=0; i < form.length; i++){
+              let current = form[i]
+              form[i].onclick = function(){
+
+                if (selected.includes(name)){
+
+                  selected.filter((d)=> d == current.value)
+                  dot_plot.add_count(current.value)
+                }else{
+
+                  selected.push(current.value);
+                  dot_plot.add_count(current.value);
+              }
+            }
+          }
+
+        svg.transition()
+          .attr("height", 600);
+        dot_plot.size(600);
+
+        bar_charts.opacity(0)
+        bar_charts()
+      }
+
+      function section_5(){
+        //iris_plot.opacity(0)
+        //iris_plot()
+        color = "lightgrey";
+        dot_plot.color(color)
+    
+        let count = 0;
+          //get all selected elements from the form
+          let selected = [];
+          var form = document.getElementById('other_option');
+          for(var i=0; i < form.length; i++){
+              let current = form[i]
+              form[i].onclick = function(){
+
+                if (selected.includes(name)){
+
+                  selected.filter((d)=> d == current.value)
+                  dot_plot.add_count(current.value)
+                }else{
+
+                  selected.push(current.value);
+                  dot_plot.add_count(current.value);
+              }
+            }
+          }
+
+
+        svg.transition()
+          .attr("height", 600);
+
+        bar_charts.opacity(0)
+        bar_charts()
+
+
+      }
+
+
+});
+
+</script>
+
+</body>
+</html>
