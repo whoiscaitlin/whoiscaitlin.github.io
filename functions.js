@@ -1,4 +1,4 @@
-function create_first_barchart(parent, width, height, metric, data){
+function create_first_barchart(parent, width, height, metric, overview_data){
     const margins = {top:10, bottom:25, left:75, right:10};
     const chart_width = width - margins.left - margins.right;
     const chart_height = height;
@@ -8,13 +8,13 @@ function create_first_barchart(parent, width, height, metric, data){
 
     const x_scale = d3.scaleLinear()
         .range([0, chart_width])
-        .domain([0, d3.max(data, (d)=>+d[metric])]);
+        .domain([0, d3.max(overview_data, (d)=>+d[metric])]);
 
     console.log(x_scale.domain())
 
     const y_scale = d3.scaleBand()
         .range([chart_height, 0])
-        .domain(data.map((d)=>d.country));
+        .domain(overview_data.map((d)=>d.country));
 
     const y_axis = chart.append("g")
         .call(d3.axisLeft(y_scale));
@@ -33,7 +33,7 @@ function create_first_barchart(parent, width, height, metric, data){
         .text("Jewish Population in 1933");
 
     const bars = chart.selectAll(".bar")
-    .data(data)
+    .data(overview_data)
     .enter()
       .append("rect")
       .attr("class", "bar")
@@ -82,6 +82,7 @@ function create_iris_plot(parent, width, height, data){
     let camps = [];
     let count = 0;
     let distance = 0;
+    let dots_data = data;
 
     const chart = parent.append("g")
     .attr("id", "dot-plot")
@@ -113,7 +114,7 @@ function create_iris_plot(parent, width, height, data){
 
 
     const circles = chart.selectAll(".dot")
-        .data(data)
+        .data(dots_data)
         .enter()
         .append("circle")
         .attr("class", "dot")
@@ -162,7 +163,7 @@ function create_iris_plot(parent, width, height, data){
         }
 
         const update_size = function(){
-          console.log("chart size is"+size)
+          //console.log("chart size is"+size)
           parent.selectAll("#dot-plot").transition()
           .duration(800)
           .attr("height", size)
@@ -194,10 +195,10 @@ function create_iris_plot(parent, width, height, data){
             count = count + total;
             console.log(count, total);
             chart.selectAll(".dot").classed("active", function(d){
-              if (d.key < count) {
-                d.value = name;
-                return true}
-            })
+              if (d.key < count) {return true}
+            });
+
+      
 
             chart.selectAll(".active").transition()
               .style("fill", (d)=> type[d.value][1])
@@ -279,5 +280,135 @@ function create_iris_plot(parent, width, height, data){
 
 }
 
+function call_this_function(){
+  let string = "you are here"
+  console.log("call")
+  return string
+}
+
 
 //veronica's map goes here
+function europe_map(parent, width, height, map_data, camps_data, extermination_data){
+
+    console.log("you are here")
+    const margins = {top:10, bottom:0, left:50, right:10};
+    let opacity = 0;
+
+    const map_layer = parent.append("g")
+        .attr("id", "map-layer")
+        .style("opacity", opacity)
+
+    const point_layer = parent.append("g")
+        .attr("id", "point-layer")
+        .classed("hidden", true)
+        .style("opacity", opacity)
+
+    const contour_layer = parent.append("g")
+        .attr("id", "contour-layer")
+        .classed("hidden", true)
+        .style("opacity", opacity)
+
+    const projection = d3.geoAlbers()
+			.center([15, 52])
+			.rotate([4.0,0])
+			.scale(1500)
+			.translate([width/2, height/2])
+
+		// create a path tool that will translate GeoJSON into SVG path data
+		const path = d3.geoPath().projection(projection);
+    const europe_countries = topojson.feature(map_data, map_data.objects.europe).features;
+
+  		let layer = map_layer.selectAll("path")
+  			 .data(europe_countries)
+  			 .enter()
+  			 .append("path")
+  			 .attr("d", path)
+  			 .style("stroke", "black")
+  			 .style("fill", "#a9c2c1");
+			 //darkkhaki
+
+  		 let points = point_layer.selectAll("cirles")
+  				 .data(camps_data)
+  				 .enter()
+  				 .append("circle")
+  				 .attr("cx", (d) => projection([+d.longitude, +d.latitude])[0])
+  				 .attr("cy", (d) => projection([+d.longitude, +d.latitude])[1])
+  				 .attr("r", 3.5)
+  				 .style("fill", "navy")
+
+
+
+         // points.on("mouseover", function(d){
+         // d3.select(this).classed("highligthted", true);
+         // d3.select("#camp").text(d.camp);
+         // const coordinates = [d3.event.pageX, d3.event.pageY];
+         // d3.select("#tooltip").style("left", (coordinates[0]+15) + "px");
+         // d3.select("#tooltip").style("top", (coordinates[1]+10) + "px");
+         // d3.select("#tooltip").classed("hidden", false);
+         // })
+         // points.on("mouseout", function(d){
+         // d3.select(this).classed("highligthted", false);
+         // d3.select("#tooltip").classed("hidden", true);
+         // })
+
+       let contour = contour_layer.selectAll("path")
+     			.data(extermination_data)
+     			.enter()
+     			.append("circle")
+     			.attr("cx", (d) => projection([+d.longitude, +d.latitude])[0])
+     			.attr("cy", (d) => projection([+d.longitude, +d.latitude])[1])
+     			.attr("r", 6)
+     			.style("fill", "red")
+
+
+
+        // contour.on("mouseover", function(d){
+        // d3.select(this).classed("highligthted", true);
+        // d3.select("#camp").text(d.camp);
+        // const coordinates = [d3.event.pageX, d3.event.pageY];
+        // d3.select("#tooltip").style("left", (coordinates[0]+15) + "px");
+        // d3.select("#tooltip").style("top", (coordinates[1]+10) + "px");
+        // d3.select("#tooltip").classed("hidden", false);
+        // })
+        // contour.on("mouseout", function(d){
+        // d3.select(this).classed("highligthted", false);
+        // d3.select("#tooltip").classed("hidden", true);
+        // })
+
+        d3.selectAll("#controls input").on("change", function(){
+            const option = d3.select(this);
+
+            if (option.attr("value") == "point-layer"){
+                  point_layer.classed("hidden", !option.property("checked"))
+                }
+                else if (option.attr("value") == "contour-layer"){
+                  contour_layer.classed("hidden", !option.property("checked"))
+                }
+                console.log(option.attr("value"), option.property("checked"));
+            });
+
+        const update_chart = function(){
+            console.log("map opacity", opacity);
+            map_layer.transition()
+            .duration(800)
+            .style("opacity", opacity)
+            point_layer.transition()
+            .duration(800)
+            .style("opacity", opacity)
+            contour_layer.transition()
+            .duration(800)
+            .style("opacity", opacity)
+        }
+
+        update_chart.opacity = (new_opacity)=>{
+              if (new_opacity){
+                  opacity = new_opacity;
+                  return update_chart;
+              }else{
+                  return opacity;
+              }
+
+          }
+
+      return update_chart;
+}
