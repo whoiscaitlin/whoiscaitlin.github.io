@@ -41,8 +41,10 @@ function create_first_barchart(parent, width, height, metric, data){
       .attr("y", d=>y_scale(d.country))
       .attr("width", (d)=>x_scale(d[metric]))
       .attr("height", y_scale.bandwidth())
-      .style("fill", "lightblue")
+      .style("fill", "#A9C2C1")
       .style("stroke", "black");
+
+
 
       const update_chart = function(){
           console.log("bar chart opacity", opacity);
@@ -72,12 +74,14 @@ function create_iris_plot(parent, width, height, data){
     const chart_height = height - margins.top - margins.bottom;
     const PER_ROW = 48;
     const PER_COL = 15;
+    const type = {auschwitz:[100,'#543005'], treblinka:[93,'#8c510a'], belzec:[35,'#bf812d'], sobibor:[17,'#dfc27d'], chelmno:[18,'#f6e8c3'], ghettos:[80,'#f5f5f5'], western:[20,'#c7eae5'],  concentration:[15, '#80cdc1'], russian:[130,'#35978f'], german:[6,'#01665e'], other:[50,'#003c30'],};
     let opacity = 0;
     let color = "dodgerblue";
     let size = height;
     let name = null;
     let camps = [];
     let count = 0;
+    let distance = 0;
 
     const chart = parent.append("g")
     .attr("id", "dot-plot")
@@ -91,16 +95,20 @@ function create_iris_plot(parent, width, height, data){
         .range([chart_height, 0])
         .domain([0, chart_height/15])
 
-    chart.append("text")
-        .attr("id", "x_label_bottom")
-        .attr("text-anchor", "middle")
-        .attr("transform", `translate(${width/2}, 15)`)
-        .text("Jewish Population in 1933 Revisualized");
+    const color_scale = d3.scaleOrdinal()
+        .range(['#543005','#8c510a','#bf812d','#dfc27d','#f6e8c3','#f5f5f5','#c7eae5','#80cdc1','#35978f','#01665e','#003c30'])
+        .domain(type);
 
     chart.append("text")
         .attr("id", "x_label_top")
         .attr("text-anchor", "middle")
-        .attr("transform", `translate(${width/2}, ${chart_height+40})`)
+        .attr("transform", `translate(${width/2}, 15)`)
+        .text("Jewish Population in 1933 Revisualized");
+
+    parent.append("text")
+        .attr("id", "x_label_bottom")
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${width/2+15}, ${chart_height+50})`)
         .text("Each Circle Represents 10,000 People");
 
 
@@ -109,18 +117,17 @@ function create_iris_plot(parent, width, height, data){
         .enter()
         .append("circle")
         .attr("class", "dot")
-        .classed("children", (d)=>d < 150)
-        .classed("women", (d)=>d >= 150 && d < 350)
-        .classed("elderly", (d)=> d >= 350 && d < 450)
-        .classed("survived", (d)=> d >= 660 && d < 960)
-        .attr("cx", (d)=> x_scale(d % PER_ROW))
-        .attr("cy", (d)=> y_scale(Math.floor(d / PER_ROW)))
+        .classed("children", (d)=>d.key < 150)
+        .classed("women", (d)=>d.key >= 150 && d.key < 350)
+        .classed("elderly", (d)=> d.key >= 350 && d.key < 450)
+        .classed("survived", (d)=> d.key >= 660 && d.key < 960)
+        .attr("cx", (d)=> x_scale(d.key % PER_ROW))
+        .attr("cy", (d)=> y_scale(Math.floor(d.key / PER_ROW)))
         .attr("r", 6)
         .style("stroke", "black")
         .style("fill", color);
 
         const update_chart = function(){
-            console.log("bar chart opacity", opacity);
             chart.transition()
             .duration(800)
             .style("opacity", opacity)
@@ -164,31 +171,16 @@ function create_iris_plot(parent, width, height, data){
         const add_circles = function(){
 
           let total = 0;
-          console.log(name);
-          console.log(camps);
-          if (name=="auschwitz"){ total = 1000; }
-          if (name=="treblinka"){ total = 93; }
-          if (name=="belzec"){ total = 35; }
-          if (name=="sobibor"){ total = 17; }
-          if (name=="chelmno"){ total = 18; }
-          if (name=="ghettos"){ total = 80; }
-          if (name=="western"){ total = 200; }
-          if (name=="central"){ total = 20; }
-          if (name=="concentration"){ total = 15; }
-          if (name=="russian"){ total = 17; }
-          if (name=="german"){ total = 18; }
-          if (name=="sebria"){ total = 80; }
-          if (name=="other"){ total = 80; }
-
+          total = type[name][0];
           //if the list of camps includes the name that means we're removing it
           if (camps.includes(name)){
-
             //console.log("moving up");
             chart.selectAll(".dot").classed("inactive", function(d){
-              if (d < count && d >= (count-total)) {return true}
+              if (d.key < count && d.key >= (count-total)) {return true}
             })
 
             chart.selectAll(".inactive").transition()
+              .style("fill","blue")
               .duration(1000)
               .attr("transform", `translate(0, -0)`)
 
@@ -200,15 +192,34 @@ function create_iris_plot(parent, width, height, data){
             camps.push(name);
             //console.log("moving down");
             count = count + total;
-            //console.log(count);
+            console.log(count, total);
             chart.selectAll(".dot").classed("active", function(d){
-              if (d < count) {return true}
+              if (d.key < count) {
+                d.value = name;
+                return true}
             })
+
             chart.selectAll(".active").transition()
+              .style("fill", (d)=> type[d.value][1])
               .duration(1000)
               .attr("transform", `translate(0, 200)`)
           }
         }
+
+      const move_text = function(){
+
+        parent.selectAll("#x_label_bottom").transition()
+          .duration(1000)
+          .attr("transform", `translate(${width/2+15}, ${chart_height+distance})`)
+      }
+
+      const reset_circles = function(){
+        console.log("resetting circles")
+        chart.selectAll(".active").transition()
+          .duration(1000)
+          .attr("transform", `translate(0, -0)`)
+
+      }
 
       update_chart.opacity = (new_opacity)=>{
             if (new_opacity !==undefined){
@@ -239,16 +250,34 @@ function create_iris_plot(parent, width, height, data){
           }
         }
 
-        update_chart.add_count = (new_name, direction)=>{
+        update_chart.add_count = (new_name)=>{
           //if we are adding circles to the page
+          console.log("moving circles")
           if (new_name){
-            name = new_name;
-            return add_circles(new_name);
-          }else{
+            if(new_name == "reset"){
+              return reset_circles()
+            } else {
+              name = new_name;
+              return add_circles(new_name);
+           }
+            }else{
               return camps;
           }
-      }
+        }
+
+        update_chart.distance = (new_distance)=>{
+          //if we are adding circles to the page
+          if (new_distance){
+              distance = new_distance
+            return move_text(new_distance);
+          }else{
+              return distance;
+          }
+        }
 
       return update_chart;
 
 }
+
+
+//veronica's map goes here
