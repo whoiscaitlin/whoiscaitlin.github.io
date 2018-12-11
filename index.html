@@ -14,7 +14,8 @@
     body {
         max-width: 900px;
         margin: 0px auto;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: "Trebuchet MS", Helvetica, sans-serif;
+        line-height: 1.5;
     }
 
     h1{
@@ -25,6 +26,9 @@
         text-align: center;
     }
 
+    .hidden{
+        display:none;
+    }
 
     #container{
         position: relative;
@@ -38,10 +42,13 @@
     #sections > section{
         opacity: .2;
         margin-bottom: 200px;
+        padding-left: 15px;
+        border-left: 5px solid darkgrey ;
     }
 
     #sections > section.graph-scroll-active{
         opacity: 1;
+        border-left: 6px solid darkgrey ;
     }
 
     #graph{
@@ -52,40 +59,15 @@
         float: right;
     }
 
-    #footer{
-        height:1000px;
-    }
-
-   #tooltip{
-        position:absolute;
-        width:150px;
-        height:auto;
-        padding:10px;
-        background-color: white;
-        border-radius:10px;
-        box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
-        pointer-events: none;
-    }
-
-    #tooltip.hidden{
-        display:none;
-    }
-
-    #tooltip p{
-        margin:0;
-        font-family: sans-serif;
-        font-size:12px;
-    }
-
     #graph svg{
-        border:solid 1px lightgrey;
+        border:solid 5px lightgrey;
     }
 
   </style>
 
 </head>
 <body>>
-    <h1>The Fate of European Jews</h1>
+    <h1>The Fate of European Jews in the Holocaust</h1>
     <div id="container">
             <div id="graph"></div>
     <div id="sections">
@@ -96,9 +78,11 @@
         </section>
         <section>
           <h3>Map of Locations of Camps</h3>
-            From 1938 to 1944 an estimated 6 million jews would die at the hands of the Nazi Regime. The Nazis
+            From 1938 to 1944 an estimated 6 million jews would die at the hands of the Nazi Regime. The NazisHowever demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
             <form id="controls">
+              <br><br>
               <input type="checkbox" name="layer" value="point-layer"> Concentration Camps
+              <br><br>
               <input type="checkbox" name="layer" value="contour-layer"> Extermination Camps
             </form>
 
@@ -131,14 +115,21 @@
         <section>
           <h3>Deaths by Location -- Extermination Camps and Ghettos</h3>
           However demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
-          <br><br>
+          <br>
           <form id="camp_option">
-            <input type="checkbox" name="camps" value="auschwitz"> Auschwitz complex (including Birkenau, Monowitz, and subcamps)
-            <input type="checkbox" name="camps" value="treblinka"> Trebkinka 2
-            <input type="checkbox" name="camps" value="belzec"> Belzec
-            <input type="checkbox" name="camps" value="sobibor"> Sobibor
-            <input type="checkbox" name="camps" value="chelmno"> Chelmno
-            <input type="checkbox" name="camps" value="ghettos"> Ghettos
+            <input type="checkbox" name="camps" value="Auschwitz"> Auschwitz Complex
+            <br>
+            <input type="checkbox" name="camps" value="Treblinka"> Trebkinka 2
+            <br>
+            <input type="checkbox" name="camps" value="Belzec"> Belzec
+            <br>
+            <input type="checkbox" name="camps" value="Sobibor"> Sobibor
+            <br>
+            <input type="checkbox" name="camps" value="Chelmno"> Chelmno
+            <br>
+            <input type="checkbox" name="camps" value="Ghettos"> Ghettos
+            <br>
+            <input type="checkbox" name="camps" value="reset"> Reset
           </form>
         </section>
         <section>
@@ -147,35 +138,32 @@
           <br><br>
           <form id="other_option">
             <input type="checkbox" name="camps" value="western"> Shot in Western Poland
-            <br><br>
-            <input type="checkbox" name="camps" value="central"> Shot in Central Poland
-            <br><br>
+            <br>
             <input type="checkbox" name="camps" value="concentration"> Concentration Camps
-            <br><br>
+            <br>
             <input type="checkbox" name="camps" value="russian"> Russian Jews Shot in the Soviet Union
-            <br><br>
+            <br>
             <input type="checkbox" name="camps" value="german"> German, Austrian, and Czech     Jews shot in the Soviet Union
-            <br><br>
+            <br>
             <input type="checkbox" name="camps" value="other"> Other
+            <br>
+            <input type="checkbox" name="camps" value="reset"> Reset
           </form>
+        </section>
+        <section>
+          <h3>Conclusion</h3>
 
+            Sources:
+
+            Thank you:
+
+            Dedication:
 
         </section>
-
     </div>
 
 </div>
 
-<div id="footer"></div>
-<div id="tooltip" class="hidden">
-        <p>Class: <span id="class"></span></p>
-        <p>
-        Petal length: <span id="petal_length"></span><br />
-        Petal width: <span id="petal_width"></span><br />
-        Sepal length: <span id="sepal_length"></span><br />
-        Sepal width: <span id="sepal_width"></span><br />
-        </p>
-   </div>
 <script>
 
 const width = 575, height = 727
@@ -209,11 +197,7 @@ Promise.all([
     const dot_plot = create_iris_plot(svg, 550, 330, dots);
     const map_plot = europe_map(svg, 575, 725, map_data, camps_data, extermination_data);
 
-
-
-    console.log(map_plot);
-
-    const vis_steps = [section_1, section_2, section_3, section_4, section_5, section_6]
+    const vis_steps = [section_1, section_2, section_3, section_4, section_5, section_6, section_7]
     const gs = d3.graphScroll()
       .container(d3.select("#container"))
       .graph(d3.select("#graph"))
@@ -224,6 +208,7 @@ Promise.all([
           vis_steps[i]();
       });
 
+      //a function to clear the checkboxes in sections 5/6
       function clear_boxes(){
         console.log("clearing boxes")
         var checkboxes = document.getElementsByTagName('input');
@@ -234,10 +219,11 @@ Promise.all([
         }
       }
 
+      //bar chart
       function section_1(){
 
         dot_plot.opacity(0);
-        dot_plot.distance(250);
+        dot_plot.distance(500);
         dot_plot();
 
         svg.transition()
@@ -250,10 +236,12 @@ Promise.all([
         map_plot();
 
       }
-
+      //Geographic Map
       function section_2(){
-        //Veronica's map code goes here !
+
         dot_plot.opacity(0);
+        dot_plot.distance(500);
+        dot_plot();
 
         bar_charts.opacity(0)
         bar_charts();
@@ -264,15 +252,16 @@ Promise.all([
         map_plot.opacity(1)
         map_plot();
 
+
+
       }
 
-
+      //dot plot -- Intro
       function section_3(){
 
         dot_plot.opacity(1);
         dot_plot.distance(50);
         dot_plot();
-        dot_plot.color("survived");
 
         svg.transition()
           .attr("height", 400);
@@ -280,12 +269,14 @@ Promise.all([
         bar_charts.opacity(0);
         bar_charts();
 
+        //bring in the new Map
         map_plot.opacity(.0000000001);
         map_plot();
     }
-
+      //dot plot -- By Demographic
       function section_4(){
 
+        //get color option from menu
         document.getElementById('color_option').addEventListener('change', function(event){
 
           let color = document.getElementById("color_option").value;
@@ -293,31 +284,33 @@ Promise.all([
           dot_plot.color(color)
         })
 
-
-        dot_plot.distance(50)
-        dot_plot.add_count("reset");
-        dot_plot();
         svg.transition()
           .attr("height", 400);
+
+        dot_plot.add_count("reset");
+        dot_plot.distance(50);
+        dot_plot();
 
         bar_charts.opacity(0)
         bar_charts()
 
         clear_boxes();
-
       }
 
+      //dot plot -- by Camps & Ghettos
       function section_5(){
-        //reset the colors of the dot_plot
-        color = "lightgrey";
-        dot_plot.color(color)
-        let count = 0;
+
+        let count = 0; //holds the number of circles to move down
           //get all selected elements from the form
           let selected = [];
           var form = document.getElementById('camp_option');
           for(var i=0; i < form.length; i++){
-              let current = form[i]
+            let current = form[i]
               form[i].onclick = function(){
+
+                if (current.value == "reset"){
+                  clear_boxes();
+                }
 
                 if (selected.includes(name)){
 
@@ -332,24 +325,21 @@ Promise.all([
           }
 
         svg.transition()
-          .attr("height", 600);
-        dot_plot.size(600);
-        dot_plot.distance(250);
+          .attr("height", 550);
+        dot_plot.size(550);
+        //dot_plot.color("darkgrey");
+        dot_plot.distance(200);
         dot_plot();
 
         bar_charts.opacity(0)
         bar_charts();
 
-        console.log(dots); 
       }
-
+      //dot plot -- by Shooting and Other
       function section_6(){
-        //iris_plot.opacity(0)
-        //iris_plot()
-        color = "lightgrey";
-        dot_plot.color(color)
 
-        let count = 0;
+        let count = 0; //holds the number of circles to move down
+
           //get all selected elements from the form
           let selected = [];
           var form = document.getElementById('other_option');
@@ -357,6 +347,10 @@ Promise.all([
               let current = form[i]
               form[i].onclick = function(){
 
+                if (current.value == "reset"){
+                  clear_boxes();
+                }
+
                 if (selected.includes(name)){
 
                   selected.filter((d)=> d == current.value)
@@ -371,12 +365,22 @@ Promise.all([
 
 
         svg.transition()
-          .attr("height", 600);
+          .attr("height", 550);
 
         bar_charts.opacity(0)
         bar_charts()
 
 
+      }
+      //Conclusion
+      function section_7(){
+
+        svg.transition()
+          .attr("height", 400);
+
+        dot_plot.add_count("reset");
+        dot_plot.distance(50);
+        dot_plot();
       }
 
 });
