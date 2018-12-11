@@ -1,3 +1,4 @@
+//creates the bar chart object
 function create_first_barchart(parent, width, height, metric, overview_data){
     const margins = {top:10, bottom:25, left:75, right:10};
     const chart_width = width - margins.left - margins.right;
@@ -44,8 +45,6 @@ function create_first_barchart(parent, width, height, metric, overview_data){
       .style("fill", "#A9C2C1")
       .style("stroke", "black");
 
-
-
       const update_chart = function(){
           console.log("bar chart opacity", opacity);
           chart.transition()
@@ -67,22 +66,23 @@ function create_first_barchart(parent, width, height, metric, overview_data){
 }
 
 
-
+//creates the dot-plot object
 function create_iris_plot(parent, width, height, data){
     const margins = {top:10, bottom:0, left:50, right:10};
     const chart_width = width - margins.left - margins.right;
     const chart_height = height - margins.top - margins.bottom;
     const PER_ROW = 48;
     const PER_COL = 15;
-    const type = {auschwitz:[100,'#543005'], treblinka:[93,'#8c510a'], belzec:[35,'#bf812d'], sobibor:[17,'#dfc27d'], chelmno:[18,'#f6e8c3'], ghettos:[80,'#f5f5f5'], western:[20,'#c7eae5'],  concentration:[15, '#80cdc1'], russian:[130,'#35978f'], german:[6,'#01665e'], other:[50,'#003c30'],};
+    const type = {Auschwitz:[100,'#a6cee3'], Treblinka:[93,'#1f78b4'], Belzec:[35,'#b2df8a'], Sobibor:[17,'#33a02c'], Chelmno:[18,'#fb9a99'], Ghettos:[80,'#ff7f00'], western:[20,'#cab2d6'],  concentration:[15, '#6a3d9a'], russian:[130,'#ffff99'], german:[6,'#e31a1'], other:[50,'#fdbf6f'],};
     let opacity = 0;
-    let color = "dodgerblue";
+    let color = "darkgrey";
     let size = height;
     let name = null;
     let camps = [];
     let count = 0;
     let distance = 0;
     let dots_data = data;
+    let deaths = 0;
 
     const chart = parent.append("g")
     .attr("id", "dot-plot")
@@ -96,9 +96,11 @@ function create_iris_plot(parent, width, height, data){
         .range([chart_height, 0])
         .domain([0, chart_height/15])
 
+    /*
     const color_scale = d3.scaleOrdinal()
         .range(['#543005','#8c510a','#bf812d','#dfc27d','#f6e8c3','#f5f5f5','#c7eae5','#80cdc1','#35978f','#01665e','#003c30'])
         .domain(type);
+    */
 
     chart.append("text")
         .attr("id", "x_label_top")
@@ -111,7 +113,6 @@ function create_iris_plot(parent, width, height, data){
         .attr("text-anchor", "middle")
         .attr("transform", `translate(${width/2+15}, ${chart_height+50})`)
         .text("Each Circle Represents 10,000 People");
-
 
     const circles = chart.selectAll(".dot")
         .data(dots_data)
@@ -130,7 +131,7 @@ function create_iris_plot(parent, width, height, data){
 
         const update_chart = function(){
             chart.transition()
-            .duration(800)
+            .duration(200)
             .style("opacity", opacity)
         }
 
@@ -155,13 +156,6 @@ function create_iris_plot(parent, width, height, data){
               .duration(300)
               .style("fill", "orange")
 
-          if (selection == "survived")
-            chart.selectAll("."+selection).transition()
-              .duration(300)
-              .style("fill", "dodgerblue")
-
-        }
-
         const update_size = function(){
           //console.log("chart size is"+size)
           parent.selectAll("#dot-plot").transition()
@@ -169,11 +163,16 @@ function create_iris_plot(parent, width, height, data){
           .attr("height", size)
         }
 
+        //moves circles up and down depending on selection
         const add_circles = function(){
 
           let total = 0;
           total = type[name][0];
           //if the list of camps includes the name that means we're removing it
+          if (name == "reset") {
+            return reset_circles;
+          }
+
           if (camps.includes(name)){
             //console.log("moving up");
             chart.selectAll(".dot").classed("inactive", function(d){
@@ -188,38 +187,75 @@ function create_iris_plot(parent, width, height, data){
             count = count - total;
             camps = camps.filter((d)=> d != name);
 
+            deaths = deaths - (total * 10000)
+            change_deaths(name, total * 10000);
+
           } else{
 
             camps.push(name);
-            //console.log("moving down");
+
+            for (let i=0; i<total; i++){
+              if (count == 0){
+                dots_data[i].value = name }
+              else {
+                dots_data[i+count].value = name}
+            }
+
             count = count + total;
-            console.log(count, total);
             chart.selectAll(".dot").classed("active", function(d){
               if (d.key < count) {return true}
             });
 
-      
-
             chart.selectAll(".active").transition()
               .style("fill", (d)=> type[d.value][1])
               .duration(1000)
-              .attr("transform", `translate(0, 200)`)
+              .attr("transform", `translate(0, 150)`)
+
+            deaths = deaths + (total * 10000)
+            change_deaths(name, total * 10000);
+
           }
         }
 
+      //moves the label up and down depending on size of chart
       const move_text = function(){
-
+        console.log("moving text")
         parent.selectAll("#x_label_bottom").transition()
           .duration(1000)
           .attr("transform", `translate(${width/2+15}, ${chart_height+distance})`)
       }
 
+
       const reset_circles = function(){
         console.log("resetting circles")
         chart.selectAll(".active").transition()
           .duration(1000)
+          .style("fill", "darkgrey")
           .attr("transform", `translate(0, -0)`)
 
+        chart.selectAll(".dot").classed("active", false);
+        count = 0;
+        deaths = 0;
+        change_deaths();
+        camps = [];
+
+      }
+
+      //updates the label based on the number of deaths
+      const change_deaths = function(name, current){
+        if (deaths == 0){
+          parent.selectAll("#x_label_bottom").transition()
+            .text("Each Circle Represents 10,000 People");
+
+        } else {
+          if (name != "western" && name != "russian" && name != "german" && name != "other" && name != "concentration" ){
+            parent.selectAll("#x_label_bottom").transition()
+              .text("~ "+current+" Jews died in "+name+" || Total Number of Deaths = "+deaths);
+          } else {
+            parent.selectAll("#x_label_bottom").transition()
+              .text("~ "+current+" Jews died || Total Number of Deaths = "+deaths);
+          }
+        }
       }
 
       update_chart.opacity = (new_opacity)=>{
@@ -229,7 +265,6 @@ function create_iris_plot(parent, width, height, data){
             }else{
                 return opacity;
             }
-
         }
 
         update_chart.color = (new_color)=>{
@@ -239,7 +274,6 @@ function create_iris_plot(parent, width, height, data){
             }else{
                 return color;
             }
-
         }
 
         update_chart.size = (new_size)=>{
@@ -280,14 +314,7 @@ function create_iris_plot(parent, width, height, data){
 
 }
 
-function call_this_function(){
-  let string = "you are here"
-  console.log("call")
-  return string
-}
-
-
-//veronica's map goes here
+//creates the map object
 function europe_map(parent, width, height, map_data, camps_data, extermination_data){
 
     console.log("you are here")
