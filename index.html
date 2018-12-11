@@ -6,9 +6,14 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="functions.js" ></script>
     <script src="graph-scroll.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
 
 
-    <style>
+    <style type="text/css">
+            .hidden{
+                display:none;
+            }
 
     body {
         max-width: 900px;
@@ -18,10 +23,23 @@
 
     h1{
         margin: 50px;
+        background-color: #5970A4;
+        text-decoration-color: #FFFFFF;
     }
 
     h1{
         text-align: center;
+    }
+
+    #map{
+        float:left;
+    }
+
+    #controls{
+        float:left;
+    }
+    #controls ul{
+        list-style-type:none;
     }
 
 
@@ -32,15 +50,18 @@
     #sections{
         width: 300px;
         padding-bottom:300px;
+
     }
 
     #sections > section{
         opacity: .2;
         margin-bottom: 200px;
+
     }
 
     #sections > section.graph-scroll-active{
         opacity: 1;
+
     }
 
     #graph{
@@ -83,15 +104,34 @@
   </style>
 
 </head>
-<body>
+<body bgcolor="#828DA5">
     <h1>The Fate of European Jews</h1>
     <div id="container">
-            <div id="graph"></div>
+    <div id="map"></div>
+    <div id="graph"></div>
     <div id="sections">
+
+
+
+    <div id= tooltip class="hidden">
+        <p>Name: <span id="camp"></span></p>
+    </div>
 
         <section>
             <h3>Introduction: Pre-war Jewish Population by Country</h3>
             In 1933, approximately 9.5 million Jews lived in Europe, comprising 1.7% of the total European population. This number represented more than 60 percent of the world's Jewish population at that time, estimated at 15.3 million.
+        </section>
+
+        <section>
+            <h3>Map</h3>
+            Text.
+            Text.
+
+            <form id="controls">
+              <input type="checkbox" name="layer" value="point-layer"> Concentration Camps
+              <input type="checkbox" name="layer" value="contour-layer"> Extermination Camps
+            </form>
+
         </section>
 
         <section>
@@ -164,19 +204,24 @@
 </div>
 
 <div id="footer"></div>
-<div id="tooltip" class="hidden">
-        <p>Class: <span id="class"></span></p>
-        <p>
-        Petal length: <span id="petal_length"></span><br />
-        Petal width: <span id="petal_width"></span><br />
-        Sepal length: <span id="sepal_length"></span><br />
-        Sepal width: <span id="sepal_width"></span><br />
-        </p>
-   </div>
-<script>
 
-d3.csv("overview_data.csv").then(function(data){
+<script type="text/javascript">
+
+const width = 575, height = 725;
+
+Promise.all([
+    d3.json("europe-topo.json"),
+    d3.csv("camps.csv"),
+    d3.csv("extermination.csv"),
+    d3.csv("overview_data.csv")
+]).then(function(data){
+  const map_data = data[0];
+  const camps_data = data[1];
+  const extermination_data = data[2];
+  const overview_data = data[3];
+
     const color_scale = d3.scaleOrdinal(d3.schemeCategory10);
+
     const svg = d3.select("#graph").append("svg")
         .attr("width", 600)
         .attr("height", 400);
@@ -190,10 +235,12 @@ d3.csv("overview_data.csv").then(function(data){
 
         console.log(dots);
 
-    const bar_charts = create_first_barchart(svg, 550, 330, "prewar", data);
+    const bar_charts = create_first_barchart(svg, 550, 330, "prewar", overview_data);
     const dot_plot = create_iris_plot(svg, 550, 330, dots);
+    const map_plot = europe_map(svg, 575, 725, map_data, camps_data, extermination_data);
 
-    const vis_steps = [section_1, section_2, section_3, section_4, section_5]
+    const vis_steps = [section_1, section_2, section_3, section_4, section_5, section_6]
+
     const gs = d3.graphScroll()
       .container(d3.select("#container"))
       .graph(d3.select("#graph"))
@@ -203,6 +250,7 @@ d3.csv("overview_data.csv").then(function(data){
           console.log(i);
           vis_steps[i]();
       });
+
 
       function section_1(){
 
@@ -214,9 +262,31 @@ d3.csv("overview_data.csv").then(function(data){
 
         bar_charts.opacity(1)
         bar_charts();
+
+        console.log(dot_plot);
+
+        map_plot.opacity(0)
+        map_plot();
+
       }
 
       function section_2(){
+
+        dot_plot.opacity(0);
+        dot_plot();
+
+        bar_charts.opacity(0)
+        bar_charts();
+
+        svg.transition()
+          .attr("height", 500);
+
+        europe.opacity(1)
+        europe();
+
+    }
+
+      function section_3(){
 
         dot_plot.opacity(1);
         dot_plot();
@@ -224,9 +294,15 @@ d3.csv("overview_data.csv").then(function(data){
 
         bar_charts.opacity(0);
         bar_charts();
+
+        svg.transition()
+          .attr("height", 600);
+
+        europe.opacity(0)
+        europe();
     }
 
-      function section_3(){
+      function section_4(){
 
         document.getElementById('color_option').addEventListener('change', function(event){
 
@@ -241,10 +317,17 @@ d3.csv("overview_data.csv").then(function(data){
         bar_charts.opacity(0)
         bar_charts()
 
+        svg.transition()
+          .attr("height", 600);
+
+        europe.opacity(0)
+        europe();
+
       }
 
-      function section_4(){
+      function section_5(){
         //reset the colors of the dot_plot
+
         color = "lightgrey";
         dot_plot.color(color)
         let count = 0;
@@ -273,14 +356,21 @@ d3.csv("overview_data.csv").then(function(data){
 
         bar_charts.opacity(0)
         bar_charts()
+
+        svg.transition()
+          .attr("height", 600);
+
+        europe.opacity(0)
+        europe();
+
       }
 
-      function section_5(){
+      function section_6(){
         //iris_plot.opacity(0)
         //iris_plot()
         color = "lightgrey";
         dot_plot.color(color)
-    
+
         let count = 0;
           //get all selected elements from the form
           let selected = [];
@@ -307,6 +397,12 @@ d3.csv("overview_data.csv").then(function(data){
 
         bar_charts.opacity(0)
         bar_charts()
+
+        svg.transition()
+          .attr("height", 600);
+
+        europe.opacity(0)
+        europe();
 
 
       }
