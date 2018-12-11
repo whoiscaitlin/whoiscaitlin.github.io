@@ -6,7 +6,8 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="functions.js" ></script>
     <script src="graph-scroll.js"></script>
-
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
 
     <style>
 
@@ -96,6 +97,10 @@
         <section>
           <h3>Map of Locations of Camps</h3>
             From 1938 to 1944 an estimated 6 million jews would die at the hands of the Nazi Regime. The Nazis
+            <form id="controls">
+              <input type="checkbox" name="layer" value="point-layer"> Concentration Camps
+              <input type="checkbox" name="layer" value="contour-layer"> Extermination Camps
+            </form>
 
         </section>
 
@@ -173,7 +178,18 @@
    </div>
 <script>
 
-d3.csv("overview_data.csv").then(function(data){
+const width = 575, height = 727
+Promise.all([
+    d3.json("europe-topo.json"),
+    d3.csv("camps.csv"),
+    d3.csv("extermination.csv"),
+    d3.csv("overview_data.csv")
+]).then(function(data){
+    const map_data = data[0];
+    const camps_data = data[1];
+    const extermination_data = data[2];
+    const overview_data = data[3];
+
     const color_scale = d3.scaleOrdinal(d3.schemeCategory10);
     const svg = d3.select("#graph").append("svg")
         .attr("width", 600)
@@ -184,13 +200,18 @@ d3.csv("overview_data.csv").then(function(data){
 
         for (let i = 0; i < 960; i++) {
           dots.push({"key": i, "value": null})
-          console.log(dots[i].key)
+          //console.log(dots[i].key)
         }
 
         console.log(dots);
 
-    const bar_charts = create_first_barchart(svg, 550, 330, "prewar", data);
+    const bar_charts = create_first_barchart(svg, 550, 330, "prewar", overview_data);
     const dot_plot = create_iris_plot(svg, 550, 330, dots);
+    const map_plot = europe_map(svg, 575, 725, map_data, camps_data, extermination_data);
+
+
+
+    console.log(map_plot);
 
     const vis_steps = [section_1, section_2, section_3, section_4, section_5, section_6]
     const gs = d3.graphScroll()
@@ -224,11 +245,24 @@ d3.csv("overview_data.csv").then(function(data){
 
         bar_charts.opacity(1)
         bar_charts();
+
+        map_plot.opacity(.00000001)
+        map_plot();
+
       }
 
       function section_2(){
         //Veronica's map code goes here !
+        dot_plot.opacity(0);
 
+        bar_charts.opacity(0)
+        bar_charts();
+
+        svg.transition()
+          .attr("height", 650);
+
+        map_plot.opacity(1)
+        map_plot();
 
       }
 
@@ -240,8 +274,14 @@ d3.csv("overview_data.csv").then(function(data){
         dot_plot();
         dot_plot.color("survived");
 
+        svg.transition()
+          .attr("height", 400);
+
         bar_charts.opacity(0);
         bar_charts();
+
+        map_plot.opacity(.0000000001);
+        map_plot();
     }
 
       function section_4(){
@@ -299,6 +339,8 @@ d3.csv("overview_data.csv").then(function(data){
 
         bar_charts.opacity(0)
         bar_charts();
+
+        console.log(dots); 
       }
 
       function section_6(){
