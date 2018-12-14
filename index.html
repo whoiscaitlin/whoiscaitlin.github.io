@@ -29,7 +29,23 @@
         text-align: center;
     }
 
+    #tooltip{
+    position:absolute;
+    width:150px;
+    height:auto;
+    padding:10px;
+    background-color: white;
+    border-radius:10px;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+    pointer-events: none;
+    }
 
+    #tooltip p{
+    margin:0;
+    font-family: sans-serif;
+    font-size:12px;
+    }
+    
     #container{
         position: relative;
     }
@@ -74,31 +90,14 @@
         list-style-type:none;
     }
 
-    #tooltip{
-    position:absolute;
-    width:150px;
-    height:auto;
-    padding:10px;
-    background-color: white;
-    border-radius:10px;
-    box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
-    pointer-events: none;
-    }
 
-    #tooltip p{
-    margin:0;
-    font-family: sans-serif;
-    font-size:12px;
-    }
 
   </style>
 
 </head>
 <body>
 
-  <div id= tooltip class="hidden">
-      <p>Name: <span id="camp"></span></p>
-  </div>
+
 
     <h1>The Fate of European Jews in the Holocaust</h1>
     <div id="container">
@@ -112,6 +111,11 @@
         <section>
           <h3>Map of Locations of Camps</h3>
             From 1938 to 1944 an estimated 6 million jews would die at the hands of the Nazi Regime. The NazisHowever demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
+
+            <div id= tooltip class="hidden">
+                <p>Name: <span id="camp"></span></p>
+                <p>Name: <span id="campext"></span></p>
+            </div>
 
             <form id="controls">
               <br><br>

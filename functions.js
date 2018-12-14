@@ -366,21 +366,6 @@ function europe_map(parent, width, height, map_data, camps_data, extermination_d
   				 .attr("r", 3.5)
   				 .style("fill", "navy")
 
-
-
-         points.on("mouseover", function(d){
-         d3.select(this).classed("highligthted", true);
-         d3.select("#camp").text(camps_data.camp);
-         const coordinates = [d3.event.pageX, d3.event.pageY];
-         d3.select("#tooltip").style("left", (coordinates[0]+15) + "px");
-         d3.select("#tooltip").style("top", (coordinates[1]+10) + "px");
-         d3.select("#tooltip").classed("hidden", false);
-         })
-         points.on("mouseout", function(d){
-         d3.select(this).classed("highligthted", false);
-         d3.select("#tooltip").classed("hidden", true);
-         })
-
        let contour = contour_layer.selectAll("circles")
      			.data(extermination_data)
      			.enter()
@@ -390,15 +375,16 @@ function europe_map(parent, width, height, map_data, camps_data, extermination_d
      			.attr("r", 6)
      			.style("fill", "red")
 
-        contour.on("mouseover", function(d){
+        points.on("mouseover", function(d){
         d3.select(this).classed("highligthted", true);
         d3.select("#camp").text(extermination_data.camp);
+        d3.select("#campext").text(camps_data.camp);
         const coordinates = [d3.event.pageX, d3.event.pageY];
-        d3.select("#tooltip").style("left", (coordinates[0]+15) + "px");
+        d3.select("#tooltip").style("left", (coordinates[0]+5) + "px");
         d3.select("#tooltip").style("top", (coordinates[1]+10) + "px");
         d3.select("#tooltip").classed("hidden", false);
         })
-        contour.on("mouseout", function(d){
+        points.on("mouseout", function(d){
         d3.select(this).classed("highligthted", false);
         d3.select("#tooltip").classed("hidden", true);
         })
