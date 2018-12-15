@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Ursula Alwang -- The Fate of the Jews in Europe, Visualized </title>
+    <title>Ursula and Veronica -- The Fate of the Jews in Europe, Visualized </title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="functions.js" ></script>
     <script src="graph-scroll.js"></script>
@@ -13,13 +13,16 @@
 
     body {
         max-width: 900px;
-        margin: 0px auto;
+        margin: auto;
+
         font-family: "Trebuchet MS", Helvetica, sans-serif;
         line-height: 1.5;
     }
 
     h1{
+        background-color: cadetblue;
         margin: 50px;
+        color: white;
     }
 
     h1{
@@ -35,7 +38,7 @@
     }
 
     #sections{
-        width: 300px;
+        width: 375px;
         padding-bottom:300px;
     }
 
@@ -52,54 +55,66 @@
     }
 
     #graph{
-        margin-left: 20px;
+        margin-left: 30px;
         width: 500px;
         position: sticky;
         top: 20px;
         float: right;
     }
 
+    #key{
+
+        margin-left: 20px;
+        width: 500px;
+        position: sticky;
+        top: 600px;
+        float: right;
+    }
+
     #graph svg{
+        border:solid 5px lightgrey;
+    }
+    #key svg{
         border:solid 5px lightgrey;
     }
 
   </style>
 
 </head>
-<body>>
+<body>
     <h1>The Fate of European Jews in the Holocaust</h1>
     <div id="container">
             <div id="graph"></div>
+            <div id="key"></div>
     <div id="sections">
 
         <section>
-            <h3>Introduction: Pre-war Jewish Population by Country</h3>
-            In 1933, approximately 9.5 million Jews lived in Europe, comprising 1.7% of the total European population. This number represented more than 60 percent of the world's Jewish population at that time, estimated at 15.3 million. Over half of the Jewish population lived in Poland, Romania, and the Soviet Union. Poland alone was home to 3 million Jews, the most of any country in Europe.
+            <h3>Introduction: Pre-Holocaust Jewish Population by Country</h3>
+            In 1938 approximately 9.5 million Jews lived in Europe, comprising 1.7% of the total European population. This number represented more than 60% of the world's Jewish population at that time which was estimated at 15.3 million. Over half of the Jewish population lived in Poland, Romania, and the USSR. The Soviet Union alone was home to 3.4 million Jews, the most of any country in Europe.
         </section>
         <section>
           <h3>Map of Locations of Camps</h3>
-            From 1938 to 1944 an estimated 6 million jews would die at the hands of the Nazi Regime. The NazisHowever demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
+            From 1938 to 1944 an estimated 6 million Jews died in the Holocaust. The most common and well-known way places people died in the Holocaust was at Concentration and Extermination Camps. There were over 50 Concentration Camps scattered across Europe that were used to imprision enemies of the state such as P.O.W's, communists, homosexuals, and criminals. There were only 6 Extermination Camps which were all located in Poland. These camps are unique from the others because very few people were sent to live there, most were killed upon arrival. They were designed by the Nazis with the express intention of exterminating the Jews of Europe.
+            <br>
+            Use the menu below to show each type of camp on the map.
+            <br>
             <form id="controls">
-              <br><br>
-              <input type="checkbox" name="layer" value="point-layer"> Concentration Camps
-              <br><br>
-              <input type="checkbox" name="layer" value="contour-layer"> Extermination Camps
+              <input id="cc-camps" type="checkbox" name="layer" value="point-layer">Concentration Camps
+              <br>
+              <input type="checkbox" name="layer" value="contour-layer">Extermination Camps
+
             </form>
 
         </section>
 
         <section>
             <h3>9.5 Million Jews Revisualized</h3>
-            It's difficult to get a sense of scale for 9.6 million people. It is also difficult to comprehend the path of Jews through the holocaust in relation to the total number of fatalities. This is a graph of the pre-war population of Jews in europe with every ten thousand people represented by a circle. Scholars estimate that around 3 millions Jews survived the Holocaust.
-
-            that 6 Million Jews died in the Holocaust.
-            <br><br>
-            Let's begin with the demographics of those who died.
+            It's difficult to get a sense of scale for 9.5 million people. Even more difficult is to trace the path of the Jewish Population through the Holocaust in relation to the total number of deaths. Due to poor record keeping it is impossible to determine exactly how many people died where, but there are approximations that help us understand how Jews died in the Holocaust. This is a graph of the pre-Holocaust population of Jews in Europe with every ten thousand people represented by a circle.
+            Continue to explore the demographics, locations, and method of death.
         </section>
         <section>
             <h3>Deaths by Demographic</h3>
-            It's difficult to get a sense of scale for 9.6 million people. It is also difficult to comprehend the path of Jews through the holocaust in relation to the total number of fatalities. This is a graph of the pre-war population of Jews in europe with every ten thousand people represented by a circle. Scholars estimate that 6 Million Jews died in the Holocaust. Let's begin with the demographics of those who died. That leaves about 3 million Jews who surived.
-            <br>
+            The Nazis began by selecting the most vulerable populations for extermination: children, women, and the elderly. Of all the Jews who survived the Holocaust most were able-bodied men over the age of 18, due to their capability to work as forced laborers in camps. There were womens camps at Ravensbrück, Bergen-Belsen, and Auchwitz-Birkenau, but these represent only a small fraction of the women who lived during the Holocaust. Children fared the worst, the few who survived were either hidden or lived under forged identities.
             <br>
             Use the menu below to select a demographic to view.
             <br><br>
@@ -109,12 +124,31 @@
                 <option value="elderly">Elderly</option>
             </select>
             <br><br>
-            All combined, women, children, and the elderly make up just more than half of the victems.
+            All combined, women, children, and the elderly make up just more than half of the victims.
 
         </section>
         <section>
+          <h3>Deaths by Location -- Concentration Camps, Shooting, and Others</h3>
+          <p>
+          Though it is commonly believed that most Jews died in Extermination Camps, almost half of all deaths came through uncoordated measures. Early on in the Holocaust many Jews were sent to makeshift camps in Poland and Russia without food or supplies and died of exposure. Many were also sent to concentration camps where they perished due to disease or malnutrition. Over a million russian Jews died when Hitler invaded Russia in 1941. Following behind the troops were four special task forces called the Einzatsgruppen, who would move in after a town had been conqured and shoot all the Jews who lived there.
+          <br>
+          <form id="other_option">
+            <input type="checkbox" name="camps" value="western"> Killed in Western Poland
+            <br>
+            <input type="checkbox" name="camps" value="concentration"> Concentration Camps
+            <br>
+            <input type="checkbox" name="camps" value="russian"> Russian Jews Shot in the Soviet Union
+            <br>
+            <input type="checkbox" name="camps" value="german"> German, Austrian, and Czech Jews killed in the Soviet Union
+            <br>
+            <input type="checkbox" name="camps" value="other"> Other
+            <br>
+            <input type="checkbox" name="camps" value="reset"> Reset
+          </form>
+        </section>
+        <section>
           <h3>Deaths by Location -- Extermination Camps and Ghettos</h3>
-          However demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
+          <p>The other half of the deaths in the Holocaust happened in Extermination Camps and Ghettos. In 1938 when the Nazis invaded Poland, Hitler decided to forcibly centralize the Jewish population in Ghettos across major Europen cities. Conditions in the Ghettos were so bad that in the Warsaw Ghetto alone 300,000 people died. From Ghettos, the Jews were shipped to extermination camps where all but a select few were murdered. These camps were so efficient that, for example,  on a good day in Belzec everyone transported there died within an hour.
           <br>
           <form id="camp_option">
             <input type="checkbox" name="camps" value="Auschwitz"> Auschwitz Complex
@@ -131,33 +165,20 @@
             <br>
             <input type="checkbox" name="camps" value="reset"> Reset
           </form>
-        </section>
-        <section>
-          <h3>Deaths by Location -- Concentration Camps, Shooting, and Others</h3>
-          However demographics only tell one part of the story. The next part is where victems died. Though it is commonly believed that most victems died in concentraion camps, almost a third of the people killed died in uncoordinated shootings and gassings around Europe, but mostly in the Soviet Union. Many people also died in the Ghettos due to poor conditions, starvation, disease, and exposure. Insert statstic about Warsaw Ghetto.
-          <br><br>
-          <form id="other_option">
-            <input type="checkbox" name="camps" value="western"> Shot in Western Poland
-            <br>
-            <input type="checkbox" name="camps" value="concentration"> Concentration Camps
-            <br>
-            <input type="checkbox" name="camps" value="russian"> Russian Jews Shot in the Soviet Union
-            <br>
-            <input type="checkbox" name="camps" value="german"> German, Austrian, and Czech     Jews shot in the Soviet Union
-            <br>
-            <input type="checkbox" name="camps" value="other"> Other
-            <br>
-            <input type="checkbox" name="camps" value="reset"> Reset
-          </form>
+
         </section>
         <section>
           <h3>Conclusion</h3>
 
-            Sources:
-
-            Thank you:
-
-            Dedication:
+            In total only three million Jews survived. Among the countries hardest hit was Poland, who lost 90% of their Jewish Population, and Greece who lost 82%. On average two-thirds of the Jewish Population in every country died. Generally the further east a country was, the more of the Jewish population it lost due to it's proximity to the extermination camps.
+            <br> - - - - - - - - - <br>
+            This visualization was created with data from the US Holocaust Museum Encyclopedia and from HIST 0275.
+            <a href="https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution">Link to Statistics</a>
+            <br><br>
+            Thank you to Professor Rebecca Bennette, head of Jewish Studies at Middlebury College.
+            <br><br>
+            By: Ursula Alwang and Veronica Estudillo Velasco
+            Created for: CS 0465 at Middlebury College
 
         </section>
     </div>
@@ -183,7 +204,11 @@ Promise.all([
         .attr("width", 600)
         .attr("height", 400);
 
-        //create the data that represents all the 9.6 million jews in Europe before the holocaust. 1 circle will represent 20,000 people. The  dots are objects with indexes that we will then use to assign them a class. The classes correspond to the place of death, type, or demographic characteristic
+    const key = d3.select("#key").append("svg")
+        .attr("width", 600)
+        .attr("height", 60);
+
+        //create the data that represents all the 9.6 million jews in Europe before the holocaust. 1 circle will represent 10,000 people. The  dots are objects with indexes that we will then use to assign them a class. The classes correspond to the place of death, type, or demographic characteristic
         var dots = [];
 
         for (let i = 0; i < 960; i++) {
@@ -191,13 +216,17 @@ Promise.all([
           //console.log(dots[i].key)
         }
 
-        console.log(dots);
 
-    const bar_charts = create_first_barchart(svg, 550, 330, "prewar", overview_data);
+
+    const bar_chart_1 = create_first_barchart(svg, 550, 330, "prewar", overview_data);
+    const bar_chart_2 = create_first_barchart(svg, 550, 330, "percentage", overview_data);
     const dot_plot = create_iris_plot(svg, 550, 330, dots);
     const map_plot = europe_map(svg, 575, 725, map_data, camps_data, extermination_data);
+    const key_plot = create_key(key, 600, 60)
 
     const vis_steps = [section_1, section_2, section_3, section_4, section_5, section_6, section_7]
+
+
     const gs = d3.graphScroll()
       .container(d3.select("#container"))
       .graph(d3.select("#graph"))
@@ -222,55 +251,71 @@ Promise.all([
       //bar chart
       function section_1(){
 
+        //make the dot plot invisible
         dot_plot.opacity(0);
         dot_plot.distance(500);
         dot_plot();
 
+        //transition SVG to accomodate bar_chart_1
         svg.transition()
-          .attr("height", 400);
+          .attr("height", 425);
 
-        bar_charts.opacity(1)
-        bar_charts();
+        //make bar_chart_1 visible
+        bar_chart_1.opacity(1)
+        bar_chart_1();
 
+        //make bar_chart_2 invisible
+        bar_chart_2.opacity(0)
+        bar_chart_2.color("PaleVioletRed")
+        bar_chart_2();
+
+        //make map_plot invisible
         map_plot.opacity(.00000001)
         map_plot();
+
+        key.classed("hidden", true)
 
       }
       //Geographic Map
       function section_2(){
 
+        //make the dot plot invisible if the user scrolls up
         dot_plot.opacity(0);
         dot_plot.distance(500);
         dot_plot();
 
-        bar_charts.opacity(0)
-        bar_charts();
+        //make the bar chart invisble when user scrolls down
+        bar_chart_1.opacity(0)
+        bar_chart_1();
 
+        //move the SVG to accommodate the map
         svg.transition()
           .attr("height", 650);
 
+        //make the map visible
         map_plot.opacity(1)
         map_plot();
-
-
 
       }
 
       //dot plot -- Intro
       function section_3(){
 
+        //bring in the dot plot
         dot_plot.opacity(1);
         dot_plot.distance(50);
         dot_plot();
 
+        //transition the SVG to accomodate dot plot
         svg.transition()
           .attr("height", 400);
 
-        bar_charts.opacity(0);
-        bar_charts();
+        //make bar_chart_1 invisible
+        bar_chart_1.opacity(0);
+        bar_chart_1();
 
         //bring in the new Map
-        map_plot.opacity(.0000000001);
+        map_plot.opacity(.0000001);
         map_plot();
     }
       //dot plot -- By Demographic
@@ -284,15 +329,16 @@ Promise.all([
           dot_plot.color(color)
         })
 
+        //transition SVG to right size
         svg.transition()
           .attr("height", 400);
 
+        //reset the dots
         dot_plot.add_count("reset");
         dot_plot.distance(50);
         dot_plot();
 
-        bar_charts.opacity(0)
-        bar_charts()
+        key.classed("hidden", true);
 
         clear_boxes();
       }
@@ -303,7 +349,7 @@ Promise.all([
         let count = 0; //holds the number of circles to move down
           //get all selected elements from the form
           let selected = [];
-          var form = document.getElementById('camp_option');
+          var form = document.getElementById('other_option');
           for(var i=0; i < form.length; i++){
             let current = form[i]
               form[i].onclick = function(){
@@ -324,15 +370,21 @@ Promise.all([
             }
           }
 
+        //transition SVG to accommodate dot plot with transitions
         svg.transition()
           .attr("height", 550);
+
+        //transition dot plot size
         dot_plot.size(550);
-        //dot_plot.color("darkgrey");
         dot_plot.distance(200);
         dot_plot();
 
-        bar_charts.opacity(0)
-        bar_charts();
+        //make sure the key stays is hidden if the user scrolls up
+        key_plot.opacity(2);
+        key_plot();
+        key.classed("hidden", false);
+
+
 
       }
       //dot plot -- by Shooting and Other
@@ -342,7 +394,7 @@ Promise.all([
 
           //get all selected elements from the form
           let selected = [];
-          var form = document.getElementById('other_option');
+          var form = document.getElementById('camp_option');
           for(var i=0; i < form.length; i++){
               let current = form[i]
               form[i].onclick = function(){
@@ -363,24 +415,43 @@ Promise.all([
             }
           }
 
+        //make sure the dot plot is visible if user scrolls up
+        dot_plot.opacity(1);
+        dot_plot();
 
+        //make sure the SVG transitions if the user scrolls up
         svg.transition()
           .attr("height", 550);
 
-        bar_charts.opacity(0)
-        bar_charts()
+        //make sure bar_chart_2 is invisible if user scrolls up
+        bar_chart_2.opacity(0)
+        bar_chart_2();
+
+        //change key to key_2
+        key.classed("hidden", false);
+        key_plot.opacity(1);
+        key_plot();
 
 
       }
-      //Conclusion
+      //Conclusion + Percentage of Country Lost
       function section_7(){
 
+        //transition svg back to barchart height
         svg.transition()
-          .attr("height", 400);
+          .attr("height", 425);
 
-        dot_plot.add_count("reset");
-        dot_plot.distance(50);
+        //make dot plot invisible
+        dot_plot.opacity(0);
         dot_plot();
+
+        //change bar chart text and make visible
+        bar_chart_2.text("Percentage of the Jewish Population lost in the Holocaust");
+        bar_chart_2.opacity(1);
+        bar_chart_2();
+
+        //hide the key
+        key.classed("hidden", true);
       }
 
 });
