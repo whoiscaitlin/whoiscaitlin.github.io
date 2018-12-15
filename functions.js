@@ -1,8 +1,10 @@
 //creates the bar chart object
 function create_first_barchart(parent, width, height, metric, overview_data){
-    const margins = {top:10, bottom:25, left:75, right:10};
+    const margins = {top:20, bottom:25, left:85, right:10};
     const chart_width = width - margins.left - margins.right;
     const chart_height = height;
+    let text = "Jewish Population in 1938";
+    let color = "#A9C2C1";
 
     const chart = parent.append("g")
     .attr("transform", `translate(${margins.left}, ${margins.top})`);
@@ -30,8 +32,8 @@ function create_first_barchart(parent, width, height, metric, overview_data){
     chart.append("text")
         .attr("id", "x_label")
         .attr("text-anchor", "middle")
-        .attr("transform", `translate(${chart_width/2}, ${chart_height+ 2*margins.bottom})`)
-        .text("Jewish Population in 1933");
+        .attr("transform", `translate(${chart_width/2}, ${chart_height+ 2.25*margins.bottom})`)
+        .text(text);
 
     const bars = chart.selectAll(".bar")
     .data(overview_data)
@@ -43,13 +45,32 @@ function create_first_barchart(parent, width, height, metric, overview_data){
       .attr("width", (d)=>x_scale(d[metric]))
       .attr("height", y_scale.bandwidth())
       .style("fill", "#A9C2C1")
-      .style("stroke", "black");
+      .style("stroke", "black")
 
       const update_chart = function(){
           console.log("bar chart opacity", opacity);
           chart.transition()
           .duration(800)
           .style("opacity", opacity);
+        }
+
+      const update_text = function(){
+        chart.selectAll("#x_label").transition()
+          .text(text);
+      }
+
+      const update_color = function(){
+        chart.selectAll(".bar").transition()
+          .style("fill", color)
+      }
+
+      update_chart.color = (new_color)=>{
+        if (color){
+            color = new_color;
+            return update_color(color);
+        }else{
+            return color;
+        }
       }
 
       update_chart.opacity = (new_opacity)=>{
@@ -59,10 +80,17 @@ function create_first_barchart(parent, width, height, metric, overview_data){
           }else{
               return opacity;
           }
+      }
 
+      update_chart.text = (new_text)=>{
+        if (new_text){
+            text = new_text;
+            return update_text(text);
+        }else{
+            return text;
+        }
       }
       return update_chart;
-
 }
 
 
@@ -73,7 +101,17 @@ function create_iris_plot(parent, width, height, data){
     const chart_height = height - margins.top - margins.bottom;
     const PER_ROW = 48;
     const PER_COL = 15;
-    const type = {Auschwitz:[100,'#a6cee3'], Treblinka:[93,'#1f78b4'], Belzec:[35,'#b2df8a'], Sobibor:[17,'#33a02c'], Chelmno:[18,'#fb9a99'], Ghettos:[80,'#ff7f00'], western:[20,'#cab2d6'],  concentration:[15, '#6a3d9a'], russian:[130,'#ffff99'], german:[6,'#e31a1'], other:[50,'#fdbf6f'],};
+    const type =
+    {Auschwitz:[100,'#a6cee3'],        Treblinka:[93,'#1f78b4'],
+    Belzec:[35,'#b2df8a'],
+    Sobibor:[17,'#33a02c'],
+    Chelmno:[18,'#fb9a99'],
+    Ghettos:[80,'#ff7f00'],
+    western:[20,'#cab2d6'],
+    concentration:[15, '#6a3d9a'], russian:[130,'#ffff99'],
+    german:[6,'#e31a1c'],
+    other:[100,'#fdbf6f'],};
+
     let opacity = 0;
     let color = "darkgrey";
     let size = height;
@@ -106,7 +144,7 @@ function create_iris_plot(parent, width, height, data){
         .attr("id", "x_label_top")
         .attr("text-anchor", "middle")
         .attr("transform", `translate(${width/2}, 15)`)
-        .text("Jewish Population in 1933 Revisualized");
+        .text("Pre-Holocaust Jewish Population in 1938 Revisualized");
 
     parent.append("text")
         .attr("id", "x_label_bottom")
@@ -156,6 +194,8 @@ function create_iris_plot(parent, width, height, data){
               .duration(300)
               .style("fill", "orange")
 
+        }
+
         const update_size = function(){
           //console.log("chart size is"+size)
           parent.selectAll("#dot-plot").transition()
@@ -176,13 +216,15 @@ function create_iris_plot(parent, width, height, data){
           if (camps.includes(name)){
             //console.log("moving up");
             chart.selectAll(".dot").classed("inactive", function(d){
-              if (d.key < count && d.key >= (count-total)) {return true}
+              if (d.key < count && d.key >= (count-total)) {
+                 d.value = null;
+                  return true}
             })
 
             chart.selectAll(".inactive").transition()
-              .style("fill","blue")
               .duration(1000)
               .attr("transform", `translate(0, -0)`)
+              .style("fill", "darkgrey")
 
             count = count - total;
             camps = camps.filter((d)=> d != name);
@@ -222,6 +264,7 @@ function create_iris_plot(parent, width, height, data){
         console.log("moving text")
         parent.selectAll("#x_label_bottom").transition()
           .duration(1000)
+          .style("font-weight", "bold")
           .attr("transform", `translate(${width/2+15}, ${chart_height+distance})`)
       }
 
@@ -243,17 +286,22 @@ function create_iris_plot(parent, width, height, data){
 
       //updates the label based on the number of deaths
       const change_deaths = function(name, current){
+
+        //current = (current).toLocaleString('en');
+        d = (deaths).toLocaleString('en');
+
         if (deaths == 0){
           parent.selectAll("#x_label_bottom").transition()
             .text("Each Circle Represents 10,000 People");
 
         } else {
+          c = (current).toLocaleString('en');
           if (name != "western" && name != "russian" && name != "german" && name != "other" && name != "concentration" ){
             parent.selectAll("#x_label_bottom").transition()
-              .text("~ "+current+" Jews died in "+name+" || Total Number of Deaths = "+deaths);
+              .text("~ "+c+" Jews died in "+name+" || Total Number of Deaths = "+d);
           } else {
             parent.selectAll("#x_label_bottom").transition()
-              .text("~ "+current+" Jews died || Total Number of Deaths = "+deaths);
+              .text("~ "+c+" Jews died || Total Number of Deaths = "+d);
           }
         }
       }
@@ -437,5 +485,130 @@ function europe_map(parent, width, height, map_data, camps_data, extermination_d
 
           }
 
+      return update_chart;
+}
+
+//crates the key object
+function create_key(parent, width, height){
+  const margins = {top:3, bottom:3, left:50, right:10};
+  const chart_width = width - margins.left - margins.right;
+  const chart_height = height - margins.top - margins.bottom;
+  const first_half = [{"name": "Auchwitz", "color":"#a6cee3"},
+              {"name": "Treblinka", "color":"#1f78b4"},
+              {"name": "Belzec", "color":"#b2df8a"},
+              {"name": "Sobibor", "color":"#33a02c"},
+              {"name": "Chelmno", "color":"#fb9a99"},
+              {"name": "Ghettos", "color":"#ff7f00"},]
+
+    const second_half =
+    [{"name": "Western Poland", "color":"#cab2d6"},
+     {"name": "Concentration Camps", "color":"#6a3d9a"},
+     {"name": "Other Methods", "color":"#fdbf6f"},
+     {"name": "Russians Shot in Soviet Union", "color":"#ffff99"},
+     {"name": "Other Nationalities Killed in Soviet Union", "color":"#e31a1c"},]
+
+  let opacity_1 = 0;
+  let opacity_2 = 1;
+
+
+  const chart = parent.append("g")
+    .attr("id", "key")
+    .attr("transform", `translate(${margins.left}, ${margins.top})`);
+
+  const x_scale = d3.scaleLinear()
+    .range([0, chart_width-150])
+    .domain([0, 2])
+
+  const circles_1 = chart.selectAll(".circle.key_1")
+      .data(first_half).enter()
+      .append("circle")
+        .attr("class", "key_1")
+        .attr("cx", function(d,i){
+          if (i < 3) {return x_scale(i)}
+          else {return x_scale(i-3)}
+        })
+        .attr("cy", function(d,i){
+          if (i < 3) {return 15}
+          else {return 35}
+        })
+        .attr("r", 7)
+        .style("stroke", "black")
+        .style("opacity", opacity_1)
+        .style("fill", (d,i)=>first_half[i].color)
+
+  const labels_1 = chart.selectAll(".text.key_1")
+      .data(first_half).enter()
+      .append("text")
+        .attr("class", "key_1")
+        .attr("text-anchor", "left")
+        .attr("x", function(d,i){
+          if (i < 3) {return (i*195)+10}
+          else {return ((i-3)*195)+10}
+        })
+        .attr("y", function(d,i){
+          if (i < 3) {return 22}
+          else {return 42}
+        })
+        .style("opacity", opacity_1)
+        .text((d,i)=>first_half[i].name);
+
+  const circles_2 = chart.selectAll(".circle.key_2")
+      .data(second_half).enter()
+      .append("circle")
+        .attr("class", "key_2")
+        .attr("cx", function(d,i){
+          if (i < 3) {return x_scale(i)}
+          if (i == 3) {return x_scale(i-3)}
+          if (i == 4) {return x_scale(i-2.75)}
+        })
+        .attr("cy", function(d,i){
+          if (i < 3) {return 15}
+          else {return 35}
+        })
+        .attr("r", 7)
+        .style("stroke", "black")
+        .style("opacity", opacity_2)
+        .style("fill", (d,i)=>second_half[i].color);
+
+  const labels_2 = chart.selectAll(".text.key_2")
+      .data(second_half).enter()
+      .append("text")
+        .attr("class", "key_2")
+        .attr("text-anchor", "left")
+        .attr("x", function(d,i){
+          if (i < 3) {return x_scale(i)+10}
+          if (i == 3) {return x_scale(i-3)+10}
+          if (i == 4) {return x_scale(i-2.75)+10}
+        })
+        .attr("y", function(d,i){
+          if (i < 3) {return 22}
+          else {return 42}
+        })
+        .style("opacity", opacity_2)
+        .text((d,i)=>second_half[i].name);
+
+    const update_chart = function(){
+        chart.selectAll(".key_1").transition()
+        .duration(200)
+        .style("opacity", opacity_1)
+
+        chart.selectAll(".key_2").transition()
+        .duration(200)
+        .style("opacity", opacity_2)
+    }
+
+    update_chart.opacity = (number)=>{
+          if (number == 1){
+            opacity_1 = 1;
+            opacity_2 = 0;
+          } if (number == 0){
+            opacity_1 = 0;
+            opacity_2 = 0;
+          } if (number == 2) {
+            opacity_1 = 0;
+            opacity_2 = 1;
+          }
+          return update_chart;
+      }
       return update_chart;
 }

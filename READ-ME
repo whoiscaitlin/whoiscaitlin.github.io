@@ -1,0 +1,17 @@
+READ-ME hw9 Ursula and Veronica
+
+1. Components and How to Run.
+  To view our visualization you need 7 files.
+  1. europe-topo.json
+  2. camps.csv
+  3. extermination.csv
+  4. functions.js
+  5. graph-scroll.js
+  6. index.html
+  7. overview_data.csv
+
+  To run the vis, download all these files from the repository and store them in single file on your computer. In the terminal use the command "cd Documents/yourFolderName" to navigate to your folder that stores all the files. Once you are there start a simple python server on your computer using the command "python -m http.server".
+  Your terminal will give you a message that the server is located at
+  some (http:) in parenthesis. Copy and paste the url it gives you into your browser of choice. The vis should now be on your webpage.
+
+You may make this assignment public. 
